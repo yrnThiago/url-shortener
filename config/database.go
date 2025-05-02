@@ -11,18 +11,12 @@ import (
 
 var Conn *mongo.Collection
 
-type Url struct {
-	FullUrl  string `bson:"full_url"`
-	ShortUrl string `bson:"short_url"`
-	Clicks   int    `bson:"clicks"`
-}
-
 func getDatabaseUrl() string {
 	return fmt.Sprintf("mongodb+srv://%s:%s@%s.%s.mongodb.net/",
 		Env.DBUsername,
 		Env.DBPassword,
 		Env.DBName,
-		Env.DBIdk
+		Env.DBIdk,
 	)
 }
 
