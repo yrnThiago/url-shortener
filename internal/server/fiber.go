@@ -32,12 +32,13 @@ func Init() {
 		var input UrlInputDto
 		err := c.BodyParser(&input)
 		if err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "bad request"})
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": "bad request"})
 		}
 
 		err = utils.ValidateStruct(input)
 		if err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "url needs to be valid http url"})
+			return c.Status(fiber.StatusBadRequest).
+				JSON(fiber.Map{"error": "url needs to be valid http url"})
 		}
 
 		newUrl := entity.NewUrl(input.FullUrl)
@@ -56,7 +57,8 @@ func Init() {
 				zap.Error(err),
 			)
 
-			return c.Status(500).JSON(fiber.Map{"message": fiber.StatusInternalServerError})
+			return c.Status(fiber.StatusInternalServerError).
+				JSON(fiber.Map{"message": fiber.StatusInternalServerError})
 		}
 
 		config.Logger.Info(
@@ -64,19 +66,20 @@ func Init() {
 			zap.String("short_url", output.ShortUrl),
 		)
 
-		return c.Status(201).JSON(fiber.Map{"message": output.ShortUrl})
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": output.ShortUrl})
 	})
 
 	api.Get("/:id", func(c *fiber.Ctx) error {
 		var shortUrl entity.Url
 		id := c.Params("id")
 		if id == ":id" {
-			return c.Status(400).JSON(fiber.Map{"error": fiber.ErrBadRequest.Message})
+			return c.Status(fiber.StatusBadRequest).
+				JSON(fiber.Map{"error": fiber.ErrBadRequest.Message})
 		}
 
 		err := config.Conn.FindOne(context.Background(), bson.M{"_id": id}).Decode(&shortUrl)
 		if err != nil {
-			return c.Status(404).JSON(fiber.Map{"error": "url not found"})
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": "url not found"})
 		}
 
 		clicksUpdated := shortUrl.Clicks + 1
@@ -89,7 +92,8 @@ func Init() {
 				zap.Error(err),
 			)
 
-			return c.Status(500).JSON(fiber.Map{"error": fiber.ErrInternalServerError.Message})
+			return c.Status(fiber.StatusInternalServerError).
+				JSON(fiber.Map{"error": fiber.ErrInternalServerError.Message})
 		}
 
 		config.Logger.Info(
