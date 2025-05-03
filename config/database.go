@@ -21,13 +21,11 @@ func getDatabaseUrl() string {
 }
 
 func DatabaseInit() {
-	// Use the SetServerAPIOptions() method to set the version of the Stable API on the client
 	serverAPI := options.ServerAPI(options.ServerAPIVersion1)
 	opts := options.Client().
 		ApplyURI(getDatabaseUrl()).
 		SetServerAPIOptions(serverAPI)
 
-	// Create a new client and connect to the server
 	client, err := mongo.Connect(opts)
 	if err != nil {
 		panic(err)
@@ -39,11 +37,13 @@ func DatabaseInit() {
 	// 	}
 	// }()
 
-	// Send a ping to confirm a successful connection
 	if err := client.Ping(context.TODO(), readpref.Primary()); err != nil {
-		panic(err)
+		Logger.Fatal("MongoDB did not pong!")
 	}
-	fmt.Println("Pinged your deployment. You successfully connected to MongoDB!")
+
+	Logger.Info(
+		"Successfully connected to MongoDB!",
+	)
 
 	Conn = client.Database(Env.DBName).Collection("urls")
 }

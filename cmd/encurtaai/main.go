@@ -7,6 +7,8 @@ import (
 
 func main() {
 	config.Init()
+	config.LoggerInit()
 	config.DatabaseInit()
+
 	server.Init()
 }
