@@ -13,13 +13,12 @@ func NewUrl(fullUrl string) *Url {
 	id := uuid.New().String()
 
 	return &Url{
-		ID:       id,
-		FullUrl:  fullUrl,
-		ShortUrl: generateShortUrl(id),
-		Clicks:   0,
+		ID:      id,
+		FullUrl: fullUrl,
+		Clicks:  0,
 	}
 }
 
-func generateShortUrl(id string) string {
-	return "encurtaai/" + id
+func (u *Url) SetShortUrl(shortUrl string) {
+	u.ShortUrl = shortUrl
 }

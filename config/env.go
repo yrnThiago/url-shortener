@@ -8,6 +8,7 @@ import (
 )
 
 type EnvVariables struct {
+	ClientUrl  string
 	DBUsername string
 	DBPassword string
 	DBName     string
@@ -24,6 +25,7 @@ func Init() {
 	}
 
 	Env = EnvVariables{
+		ClientUrl:  os.Getenv("CLIENT_URL"),
 		DBUsername: os.Getenv("DB_USERNAME"),
 		DBPassword: os.Getenv("DB_PASSWORD"),
 		DBName:     os.Getenv("DB_NAME"),

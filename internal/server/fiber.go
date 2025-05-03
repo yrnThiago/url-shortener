@@ -22,11 +22,11 @@ type UrlOutputDto struct {
 	Clicks   int    `json:"clicks"`
 }
 
-const apiEndpoint = "/encurtaai"
+const ApiEndpoint = "/encurtaai"
 
 func Init() {
 	app := fiber.New()
-	api := app.Group(apiEndpoint)
+	api := app.Group(ApiEndpoint)
 
 	api.Post("/", func(c *fiber.Ctx) error {
 		var input UrlInputDto
@@ -41,6 +41,7 @@ func Init() {
 		}
 
 		newUrl := entity.NewUrl(input.FullUrl)
+		newUrl.SetShortUrl(utils.GenerateShortUrl(newUrl.ID))
 
 		output := &UrlOutputDto{
 			FullUrl:  newUrl.FullUrl,
