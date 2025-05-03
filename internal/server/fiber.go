@@ -23,6 +23,8 @@ type UrlOutputDto struct {
 	Clicks   int    `json:"clicks"`
 }
 
+const apiEndpoint = "/encurtaai"
+
 func Init() {
 	app := fiber.New()
 
@@ -33,29 +35,9 @@ func Init() {
 		ContextKey: "requestid",
 	}))
 
-	app.Get("/encurtaai/:id", func(c *fiber.Ctx) error {
-		var shortUrl entity.Url
-		id := c.Params("id")
-		if id == ":id" {
-			return c.Status(500).JSON(fiber.Map{"message": fiber.StatusInternalServerError})
-		}
+	api := app.Group(apiEndpoint)
 
-		err := config.Conn.FindOne(context.Background(), bson.M{"_id": id}).Decode(&shortUrl)
-		if err != nil {
-			return c.Status(400).JSON(fiber.Map{"error": "bad request"})
-		}
-
-		updateUrl := bson.M{"$set": bson.M{"clicks": shortUrl.Clicks + 1}}
-
-		_, err = config.Conn.UpdateOne(context.Background(), bson.M{"_id": id}, updateUrl)
-		if err != nil {
-			return c.Status(500).JSON(fiber.Map{"message": fiber.StatusInternalServerError})
-		}
-
-		return c.Redirect(shortUrl.FullUrl)
-	})
-
-	app.Post("/encurtaai", func(c *fiber.Ctx) error {
+	api.Post("/", func(c *fiber.Ctx) error {
 		var input UrlInputDto
 		err := c.BodyParser(&input)
 		if err != nil {
@@ -78,7 +60,28 @@ func Init() {
 		return c.Status(201).JSON(output)
 	})
 
-	log.Println("server listening on port " + "3000")
+	api.Get("/:id", func(c *fiber.Ctx) error {
+		var shortUrl entity.Url
+		id := c.Params("id")
+		if id == ":id" {
+			return c.Status(500).JSON(fiber.Map{"message": fiber.StatusInternalServerError})
+		}
 
+		err := config.Conn.FindOne(context.Background(), bson.M{"_id": id}).Decode(&shortUrl)
+		if err != nil {
+			return c.Status(400).JSON(fiber.Map{"error": "bad request"})
+		}
+
+		updateUrl := bson.M{"$set": bson.M{"clicks": shortUrl.Clicks + 1}}
+
+		_, err = config.Conn.UpdateOne(context.Background(), bson.M{"_id": id}, updateUrl)
+		if err != nil {
+			return c.Status(500).JSON(fiber.Map{"message": fiber.StatusInternalServerError})
+		}
+
+		return c.Redirect(shortUrl.FullUrl)
+	})
+
+	log.Println("server listening on port " + "3000")
 	log.Fatal(app.Listen(":" + "3000"))
 }
