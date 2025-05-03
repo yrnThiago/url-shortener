@@ -11,7 +11,7 @@ type EnvVariables struct {
 	DBUsername string
 	DBPassword string
 	DBName     string
-	DBIdk      string
+	DBDomain   string
 	Port       string
 }
 
@@ -27,7 +27,7 @@ func Init() {
 		DBUsername: os.Getenv("DB_USERNAME"),
 		DBPassword: os.Getenv("DB_PASSWORD"),
 		DBName:     os.Getenv("DB_NAME"),
-		DBIdk:      os.Getenv("DB_IDK"),
+		DBDomain:   os.Getenv("DB_DOMAIN"),
 		Port:       os.Getenv("PORT"),
 	}
 }
