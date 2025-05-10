@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input"
 import axios from "axios"
 import { useState } from "react"
+import { Loader2 } from "lucide-react"
 
 function App() {
 
@@ -37,6 +38,8 @@ function App() {
   });
 
   const handleShortUrl =  async(data: z.infer<typeof FormSchema>) => {
+    setShortUrl("")
+
     try{
       const [response] = await Promise.all([
         axios.post(apiEndpoint, data, headers)
@@ -65,15 +68,25 @@ function App() {
                 <FormItem>
                   <FormLabel>URL</FormLabel>
                   <FormControl>
-                    <Input placeholder="example.com" {...field} />
+                    <div className="md:flex">
+                      <Input placeholder="example.com" {...field} />
+                      <Button className="bg-blue-500 cursor-pointer hover:bg-blue-700" type="submit">Encurtar</Button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
           </form>
         </Form>
+
+        {shortUrl &&  
+          <Button variant="link">
+            <a href={shortUrl}>
+              {shortUrl}
+            </a>
+          </Button>
+        }
     </div>
   )
 }
