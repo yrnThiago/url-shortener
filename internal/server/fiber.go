@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"go.mongodb.org/mongo-driver/v2/bson"
 	"go.uber.org/zap"
 
@@ -26,6 +27,7 @@ const ApiEndpoint = "/encurtaai"
 
 func Init() {
 	app := fiber.New()
+	app.Use(cors.New())
 	api := app.Group(ApiEndpoint)
 
 	api.Post("/", func(c *fiber.Ctx) error {
