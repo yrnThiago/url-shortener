@@ -7,6 +7,6 @@ import (
 )
 
 func GenerateShortUrl(id string) string {
-	shortUrl := fmt.Sprintf("http://%s/encurtaai/%s", config.Env.ClientUrl, id)
+	shortUrl := fmt.Sprintf("http://%s/%s", config.Env.ClientUrl, id)
 	return shortUrl
 }

@@ -23,14 +23,11 @@ type UrlOutputDto struct {
 	Clicks   int    `json:"clicks"`
 }
 
-const ApiEndpoint = "/encurtaai"
-
 func Init() {
 	app := fiber.New()
 	app.Use(cors.New())
-	api := app.Group(ApiEndpoint)
 
-	api.Post("/", func(c *fiber.Ctx) error {
+	app.Post("/", func(c *fiber.Ctx) error {
 		var input UrlInputDto
 		err := c.BodyParser(&input)
 		if err != nil {
@@ -68,10 +65,10 @@ func Init() {
 			zap.String("short_url", output.ShortUrl),
 		)
 
-		return c.Status(fiber.StatusCreated).JSON(fiber.Map{"message": output.ShortUrl})
+		return c.Status(fiber.StatusCreated).JSON(fiber.Map{"short_url": output.ShortUrl})
 	})
 
-	api.Get("/:id", func(c *fiber.Ctx) error {
+	app.Get("/:id", func(c *fiber.Ctx) error {
 		var shortUrl entity.Url
 		id := c.Params("id")
 		if id == ":id" {

@@ -1,6 +1,8 @@
 package entity
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type Url struct {
 	ID       string `bson:"_id"`
