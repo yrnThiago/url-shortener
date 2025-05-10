@@ -17,12 +17,13 @@ import { Loader2 } from "lucide-react"
 
 function App() {
 
-  const apiEndpoint = "http://localhost:3000/encurtaai"
+  const apiEndpoint = "http://localhost:3000/"
   const headers = {
     'Content-Type': 'application/json'
   }
 
   const [shortUrl, setShortUrl] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const FormSchema = z.object({
     full_url: z.string().url({
@@ -38,7 +39,8 @@ function App() {
   });
 
   const handleShortUrl =  async(data: z.infer<typeof FormSchema>) => {
-    setShortUrl("")
+    setShortUrl("");
+    setIsLoading(true);
 
     try{
       const [response] = await Promise.all([
@@ -49,18 +51,18 @@ function App() {
         throw new Error(response.data.error)
       }
 
-      setShortUrl(response.data.message)
+      setShortUrl(response.data.short_url)
     } catch (error: any) {
       console.log(error)
     } finally {
-      console.log("request sent")
+      setIsLoading(false);
     }
   }
 
   return (
     <div className="bg-neutral-950 flex flex-col items-center justify-center min-h-svh text-white">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleShortUrl)} className="w-2/3 space-y-6">
+          <form onSubmit={form.handleSubmit(handleShortUrl)} className="w-1/2 space-y-6">
             <FormField
               control={form.control}
               name="full_url"
@@ -68,9 +70,13 @@ function App() {
                 <FormItem>
                   <FormLabel>URL</FormLabel>
                   <FormControl>
-                    <div className="md:flex">
+                    <div className="flex">
                       <Input placeholder="example.com" {...field} />
-                      <Button className="bg-blue-500 cursor-pointer hover:bg-blue-700" type="submit">Encurtar</Button>
+                      {!isLoading ? (
+                        <Button className="bg-blue-500 cursor-pointer hover:bg-blue-700" type="submit">Encurtar</Button>
+                      ) : (
+                        <Button disabled className="bg-blue-700">Aguarde<Loader2 className="animate-spin" /></Button>
+                      )}
                     </div>
                   </FormControl>
                   <FormMessage />
