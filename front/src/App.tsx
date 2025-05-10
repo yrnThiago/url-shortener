@@ -17,6 +17,9 @@ import { useState } from "react"
 function App() {
 
   const apiEndpoint = "http://localhost:3000/encurtaai"
+  const headers = {
+    'Content-Type': 'application/json'
+  }
 
   const [shortUrl, setShortUrl] = useState("");
 
@@ -33,13 +36,11 @@ function App() {
     },
   });
 
-  const addNewUrl = async (data) => {
+  const handleShortUrl =  async(data: z.infer<typeof FormSchema>) => {
     try{
-      const [response] = await Promise.all([axios.post(apiEndpoint, data, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })]);
+      const [response] = await Promise.all([
+        axios.post(apiEndpoint, data, headers)
+      ]);
 
       if (response.data.error) {
         throw new Error(response.data.error)
@@ -53,14 +54,10 @@ function App() {
     }
   }
 
-  function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(addNewUrl(data)) 
-  }
-
   return (
     <div className="bg-neutral-950 flex flex-col items-center justify-center min-h-svh text-white">
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
+          <form onSubmit={form.handleSubmit(handleShortUrl)} className="w-2/3 space-y-6">
             <FormField
               control={form.control}
               name="full_url"
