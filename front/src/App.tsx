@@ -44,7 +44,7 @@ function App() {
 
     try{
       const [response] = await Promise.all([
-        axios.post(apiEndpoint, data, headers)
+        axios.post(apiEndpoint, data, {headers})
       ]);
 
       if (response.data.error) {
@@ -52,7 +52,7 @@ function App() {
       }
 
       setShortUrl(response.data.short_url)
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.log(error)
     } finally {
       setIsLoading(false);
