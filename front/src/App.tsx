@@ -17,7 +17,7 @@ import { Loader2 } from "lucide-react"
 
 function App() {
 
-  const apiEndpoint = "http://localhost:3000/"
+  const apiEndpoint = "https://url-shortener-optt.onrender.com/"
   const headers = {
     'Content-Type': 'application/json'
   }
